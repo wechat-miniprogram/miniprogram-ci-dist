@@ -1,0 +1,35 @@
+name: Publish Package to npmjs
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      # 确认待发布版本未被占用（提前失败，而不是 publish 时才报 403）
+      - name: Check version is not already published
+        run: |
+          PUBLISHED=$(npm view miniprogram-ci@${{ github.ref_name }} version 2>/dev/null || true)
+          if [ "$PUBLISHED" = "${{ github.ref_name }}" ]; then
+            echo "::error::miniprogram-ci@${{ github.ref_name }} already exists on npm"
+            exit 1
+          fi
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

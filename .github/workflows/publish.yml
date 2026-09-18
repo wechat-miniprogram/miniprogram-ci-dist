@@ -15,6 +15,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 从 tag 提取版本号和 dist-tag（支持 v2.1.48 / v2.1.48-alpha / v2.1.48-beta）
+      - name: Extract version and dist-tag from tag
+        id: meta
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if ! echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta))?$'; then
+            echo "::error::tag must be vX.Y.Z, vX.Y.Z-alpha or vX.Y.Z-beta, got: $GITHUB_REF"
+            exit 1
+          fi
+          VERSION="${TAG#v}"
+          VERSION="${VERSION%%-*}"
+          DIST_TAG="latest"
+          if [[ "$TAG" =~ -(alpha|beta)$ ]]; then
+            DIST_TAG="${BASH_REMATCH[1]}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "dist-tag=$DIST_TAG" >> "$GITHUB_OUTPUT"
+          echo "Releasing version $VERSION to dist-tag $DIST_TAG"
+
+      # 校验 package.json 的 version 与 tag 中的版本号一致
+      - name: Check tag matches package.json version
+        run: |
+          ACTUAL=$(node -p "require('./package.json').version")
+          if [ "$ACTUAL" != "${{ steps.meta.outputs.version }}" ]; then
+            echo "::error::package.json has version $ACTUAL but tag is ${{ github.ref_name }} (expected version ${{ steps.meta.outputs.version }})"
+            exit 1
+          fi
+          echo "OK: package.json version = $ACTUAL"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -23,13 +52,13 @@ jobs:
       # 确认待发布版本未被占用（提前失败，而不是 publish 时才报 403）
       - name: Check version is not already published
         run: |
-          PUBLISHED=$(npm view miniprogram-ci@${{ github.ref_name }} version 2>/dev/null || true)
-          if [ "$PUBLISHED" = "${{ github.ref_name }}" ]; then
-            echo "::error::miniprogram-ci@${{ github.ref_name }} already exists on npm"
+          PUBLISHED=$(npm view miniprogram-ci@${{ steps.meta.outputs.version }} version 2>/dev/null || true)
+          if [ "$PUBLISHED" = "${{ steps.meta.outputs.version }}" ]; then
+            echo "::error::miniprogram-ci@${{ steps.meta.outputs.version }} already exists on npm (tag ${{ steps.meta.outputs.dist-tag }})"
             exit 1
           fi
 
-      - name: Publish to npm
-        run: npm publish --provenance --access public
+      - name: Publish to npm (dist-tag: ${{ steps.meta.outputs.dist-tag }})
+        run: npm publish --provenance --access public --tag "${{ steps.meta.outputs.dist-tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

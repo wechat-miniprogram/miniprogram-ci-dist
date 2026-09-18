@@ -58,7 +58,9 @@ jobs:
             exit 1
           fi
 
-      - name: Publish to npm (dist-tag: ${{ steps.meta.outputs.dist-tag }})
-        run: npm publish --provenance --access public --tag "${{ steps.meta.outputs.dist-tag }}"
+      - name: Publish to npm
+        run: |
+          echo "Publishing version ${{ steps.meta.outputs.version }} to dist-tag ${{ steps.meta.outputs.dist-tag }}"
+          npm publish --provenance --access public --tag "${{ steps.meta.outputs.dist-tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

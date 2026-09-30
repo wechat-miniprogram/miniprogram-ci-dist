@@ -105,6 +105,8 @@ export declare class FileHelper implements IFileHelper {
     existDir(filePath: string): boolean;
     existFile(filePath: string): boolean;
     getFileList(prefix?: string, extName?: string): string[];
+    getIgnoredFileList?(prefix?: string, extName?: string): string[];
+    getIncludedFileList?(prefix?: string, extName?: string): string[];
     getString(filePath: string): Promise<string>;
     getJSON(filePath: string): Promise<unknown>;
     readdir(dirPath: string): Promise<string[]>;
@@ -284,6 +286,8 @@ export declare interface IFileHelper {
     existDir(filePath: string): boolean;
     existFile(filePath: string): boolean;
     getFileList(prefix?: string, extName?: string): string[];
+    getIgnoredFileList?(prefix?: string, extName?: string): string[];
+    getIncludedFileList?(prefix?: string, extName?: string): string[];
     getString(filePath: string): Promise<string>;
     getJSON(filePath: string): Promise<unknown>;
     readdir(dirPath: string): Promise<string[]>;
@@ -341,6 +345,8 @@ export declare interface IPackageFile {
     subPackage: string | null;
     agentPackage: string | null;
     packageType: 'subpackage' | 'agent' | null;
+    ignored?: boolean;
+    included?: boolean;
 }
 
 declare interface IPluginConfig {

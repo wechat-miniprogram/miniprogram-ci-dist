@@ -7,6 +7,8 @@ miniprogram-ci 是从[微信开发者工具](https://developers.weixin.qq.com/mi
 miniprogram-ci 从 1.0.28 开始支持第三方平台开发的上传和预览，调用方式与普通开发模式无异。[查看详情](#第三方平台开发)
 
 ## 最近变更
+#### 2.1.48
+ - `fix` 修复若干小问题
 #### 2.1.47
  - `fix` 升级 babel 版本 修复安全问题
 #### 2.1.46

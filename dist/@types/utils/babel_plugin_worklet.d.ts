@@ -22,6 +22,8 @@ declare class ClosureGenerator {
 declare function buildWorkletString(t: any, fun: any, closureVariables: any, name: any): any;
 declare function generateWorkletFactory(t: any, fun: any): any;
 declare function removeWorkletDirective(fun: any): undefined;
+declare function hasBoundThisAnnotation(t: any, declaration: any, name: any): any;
+declare function annotateBoundThis(t: any, fun: any, closure: any): void;
 declare function makeWorkletName(t: any, fun: any): any;
 declare function extractWorkletData(t: any, fun: any, fileName: any): {
     variables: any[];

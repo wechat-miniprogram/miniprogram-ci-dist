@@ -1,6 +1,6 @@
 {
   "name": "miniprogram-ci",
-  "version": "2.1.47",
+  "version": "2.1.48",
   "description": "Module that build miniprogram project for web or app extracted from WeChatDevtools.",
   "homepage": "https://developers.weixin.qq.com/community/homepage",
   "main": "dist/index.js",
@@ -42,7 +42,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wechat-miniprogram/miniprogram-ci-dist.git"
+    "url": ""
   },
   "bin": {
     "miniprogram-ci": "bin/miniprogram-ci.js"

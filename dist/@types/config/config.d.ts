@@ -1,5 +1,5 @@
 import { IProject } from '../types';
-export declare const CI_VERSION = "2.1.47";
+export declare const CI_VERSION = "2.1.48";
 export declare const PARAM_ERROR = 10000;
 export declare const WXML_NOT_FOUND = 10007;
 export declare const JS_NOT_FOUND = 10008;
